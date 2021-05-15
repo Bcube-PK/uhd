@@ -268,7 +268,7 @@ void ad9361_device_t::_calibrate_lock_bbpll()
     /* Wait for BBPLL lock. */
     size_t count = 0;
     while (!(_io_iface->peek8(0x05e) & 0x80)) {
-        if (count > 1000) {
+        if (count > 3000) {
             throw uhd::runtime_error("[ad9361_device_t] BBPLL not locked");
             break;
         }
@@ -293,7 +293,7 @@ void ad9361_device_t::_calibrate_synth_charge_pumps()
     size_t count = 0;
     _io_iface->poke8(0x23d, 0x04);
     while (!(_io_iface->peek8(0x244) & 0x80)) {
-        if (count > 5) {
+        if (count > 10) {
             throw uhd::runtime_error("[ad9361_device_t] RX charge pump cal failure");
             break;
         }
@@ -306,7 +306,7 @@ void ad9361_device_t::_calibrate_synth_charge_pumps()
     count = 0;
     _io_iface->poke8(0x27d, 0x04);
     while (!(_io_iface->peek8(0x284) & 0x80)) {
-        if (count > 5) {
+        if (count > 10) {
             throw uhd::runtime_error("[ad9361_device_t] TX charge pump cal failure");
             break;
         }
@@ -1327,7 +1327,8 @@ double ad9361_device_t::_tune_helper(direction_t direction, const double value)
             _regs.inputsel = (_regs.inputsel & 0xC0) | 0x30; // Port C, balanced
         } else if ((value >= _client_params->get_band_edge(AD9361_RX_BAND0))
                    && (value < _client_params->get_band_edge(AD9361_RX_BAND1))) {
-            _regs.inputsel = (_regs.inputsel & 0xC0) | 0x0C; // Port B, balanced
+            //_regs.inputsel = (_regs.inputsel & 0xC0) | 0x0C; // Port B, balanced 
+            _regs.inputsel = (_regs.inputsel & 0xC0) | 0x03; // Port A, balanced
         } else if ((value >= _client_params->get_band_edge(AD9361_RX_BAND1))
                    && (value <= 6e9)) {
             _regs.inputsel = (_regs.inputsel & 0xC0) | 0x03; // Port A, balanced
@@ -1367,7 +1368,8 @@ double ad9361_device_t::_tune_helper(direction_t direction, const double value)
 
         /* Set band-specific settings. */
         if (value < _client_params->get_band_edge(AD9361_TX_BAND0)) {
-            _regs.inputsel = _regs.inputsel | 0x40;
+            //_regs.inputsel = _regs.inputsel | 0x40;
+            _regs.inputsel = _regs.inputsel & 0xBF;
         } else if ((value >= _client_params->get_band_edge(AD9361_TX_BAND0))
                    && (value <= 6e9)) {
             _regs.inputsel = _regs.inputsel & 0xBF;

@@ -24,5 +24,6 @@ PYBIND11_MODULE(libpyusrp_periphs, m)
     export_types(m);
     export_spi(m);
     export_catalina(m);
+    export_catalina(m);
     export_neon(m);
 }

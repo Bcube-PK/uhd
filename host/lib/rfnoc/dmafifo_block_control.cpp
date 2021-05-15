@@ -16,7 +16,7 @@ using namespace uhd::rfnoc;
 namespace {
 
 constexpr uint64_t BYTES_PER_BIST = 8000000;
-constexpr double BIST_TIMEOUT     = 0.5; // s
+constexpr double BIST_TIMEOUT     = 2; // s
 //! Address space between FIFO controls
 const uint32_t REG_OFFSET = 128;
 
